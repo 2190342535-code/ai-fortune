@@ -23,7 +23,16 @@
     </div>
 
     <!-- 功能网格 -->
-    <div class="feature-grid">
+    <!-- 没有角色时提示创建 -->
+    <div v-if="!roleStore.currentRole" class="no-role">
+      <p class="hint">请先创建角色</p>
+      <button class="btn btn-primary" @click="$router.push('/create-role')">
+        + 创建角色
+      </button>
+    </div>
+
+    <!-- 有角色时显示功能 -->
+    <div v-else class="feature-grid">
       <div class="feature-item" @click="$router.push('/mbti-test')">
         <div class="feature-icon">🎯</div>
         <div class="feature-name">MBTI测试</div>
