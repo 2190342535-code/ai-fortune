@@ -71,11 +71,11 @@
         <span class="tab-icon">🏠</span>
         <span>首页</span>
       </div>
-      <div class="tab-item">
+      <div class="tab-item" @click="$router.push('/daily')">
         <span class="tab-icon">🔮</span>
         <span>运势</span>
       </div>
-      <div class="tab-item">
+      <div class="tab-item" @click="$router.push('/profile')">
         <span class="tab-icon">👤</span>
         <span>我的</span>
       </div>
