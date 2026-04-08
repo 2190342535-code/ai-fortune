@@ -1,7 +1,1 @@
-{
-  "github": { "silent": true },
-  "build": {
-    "command": "cd frontend && npm install && npm run build",
-    "outputDirectory": "frontend/dist"
-  }
-}
+ {}
