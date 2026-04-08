@@ -1,6 +1,6 @@
 // 星座分析API
-import { astroCollection, rolesCollection, toObjectId } from '../../utils/db.js'
-import { success, error } from '../../utils/response.js'
+import { astroCollection, rolesCollection, toObjectId } from '../utils/db.js'
+import { success, error } from '../utils/response.js'
 import { analyzeAstro } from '../services/ai.js'
 
 // 获取星座分析
@@ -10,7 +10,7 @@ export async function getAnalysis(roleId) {
     
     const analysis = await collection.findOne({ role_id: toObjectId(roleId) })
     if (!analysis) {
-      return error('未完成星座分析')
+      return error('未完成星座分�?)
     }
     
     return success({ 
@@ -31,7 +31,7 @@ export async function generateAnalysis(roleId) {
     const roles = rolesCollection()
     const role = await roles.findOne({ _id: toObjectId(roleId) })
     if (!role) {
-      return error('角色不存在')
+      return error('角色不存�?)
     }
     
     // 调用AI分析

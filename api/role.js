@@ -1,6 +1,6 @@
 // 角色API
-import { rolesCollection, toObjectId } from '../../utils/db.js'
-import { success, error } from '../../utils/response.js'
+import { rolesCollection, toObjectId } from '../utils/db.js'
+import { success, error } from '../utils/response.js'
 import { calcRoleAutoData, calcUsefulElement } from '../services/date.js'
 
 // 获取用户所有角色

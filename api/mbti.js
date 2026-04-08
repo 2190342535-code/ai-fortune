@@ -1,6 +1,6 @@
 // MBTI相关API
-import { mbtiCollection, rolesCollection, toObjectId } from '../../utils/db.js'
-import { success, error } from '../../utils/response.js'
+import { mbtiCollection, rolesCollection, toObjectId } from '../utils/db.js'
+import { success, error } from '../utils/response.js'
 import { analyzeMBTI } from '../services/ai.js'
 
 // 获取角色MBTI结果

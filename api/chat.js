@@ -1,15 +1,15 @@
 // AI聊天API
-import { chatCollection, rolesCollection, toObjectId } from '../../utils/db.js'
-import { success, error } from '../../utils/response.js'
+import { chatCollection, rolesCollection, toObjectId } from '../utils/db.js'
+import { success, error } from '../utils/response.js'
 import { chat } from '../services/ai.js'
 
-// 发送消息
+// 发送消�?
 export async function sendMessage(roleId, message, history = []) {
   try {
     const roles = rolesCollection()
     const role = await roles.findOne({ _id: toObjectId(roleId) })
     if (!role) {
-      return error('角色不存在')
+      return error('角色不存�?)
     }
     
     // 转换历史记录格式
@@ -27,14 +27,14 @@ export async function sendMessage(roleId, message, history = []) {
       reply = getDefaultReply(message)
     }
     
-    // 添加到历史
+    // 添加到历�?
     messages.push({ role: 'user', content: message })
     messages.push({ role: 'assistant', content: reply })
     
     // 存储
     const collection = chatCollection()
     
-    // 查找或创建会话
+    // 查找或创建会�?
     let chatSession = await collection.findOne({ role_id: toObjectId(roleId) })
     
     if (chatSession) {
@@ -93,7 +93,7 @@ function getDefaultReply(message) {
     return '你好！我是你的AI运势助手，有什么想聊的吗？'
   }
   if (lowerM.includes('运势') || lowerM.includes(' fortune')) {
-    return '想了解今天的运势吗？去首页看看每日运势吧！'
+    return '想了解今天的运势吗？去首页看看每日运势吧�?
   }
   if (lowerM.includes('mbti')) {
     return 'MBTI测试可以帮助你更好地了解自己，去试试吧！'
