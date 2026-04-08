@@ -2,19 +2,20 @@
 import { connectDB, usersCollection, toObjectId } from '../utils/db.js'
 
 // 注册
-async function register(phone) {
+async function register(username, password) {
   try {
     const collection = usersCollection()
     
-    // 检查是否已存在
-    const existing = await collection.findOne({ phone })
+    // 检查用户名是否已存在
+    const existing = await collection.findOne({ username })
     if (existing) {
-      return { success: true, data: { userId: existing._id.toString() } }
+      return { success: false, message: '用户名已存在' }
     }
     
     // 创建新用户
     const result = await collection.insertOne({
-      phone,
+      username,
+      password,  // 实际项目应该加密存储
       created_at: new Date(),
       updated_at: new Date()
     })
@@ -27,13 +28,13 @@ async function register(phone) {
 }
 
 // 登录
-async function login(phone) {
+async function login(username, password) {
   try {
     const collection = usersCollection()
     
-    const user = await collection.findOne({ phone })
+    const user = await collection.findOne({ username, password })
     if (!user) {
-      return await register(phone)
+      return { success: false, message: '用户名或密码错误' }
     }
     
     return { success: true, data: { userId: user._id.toString() } }
@@ -57,7 +58,7 @@ async function getProfile(userId) {
       success: true, 
       data: {
         userId: user._id.toString(),
-        phone: user.phone,
+        username: user.username,
         created_at: user.created_at
       }
     }
@@ -96,27 +97,29 @@ export default async function handler(req, res) {
     const pathname = url.split('?')[0]
     
     // 根据路径和方法分发请求
-    // 注意：Vercel会保留完整路径 /api/user/register
-    const apiPath = pathname.replace('^/api', '') || '/'
+    const apiPath = pathname.replace('/api', '') || '/'
     
+    // 注册
     if (apiPath === '/user/register' && req.method === 'POST') {
-      const { phone } = body || {}
-      if (!phone) {
-        return res.status(400).json({ success: false, message: '手机号不能为空' })
+      const { username, password } = body || {}
+      if (!username || !password) {
+        return res.status(400).json({ success: false, message: '用户名和密码不能为空' })
       }
-      const result = await register(phone)
+      const result = await register(username, password)
       return res.status(result.success ? 200 : 400).json(result)
     }
     
+    // 登录
     if (apiPath === '/user/login' && req.method === 'POST') {
-      const { phone } = body || {}
-      if (!phone) {
-        return res.status(400).json({ success: false, message: '手机号不能为空' })
+      const { username, password } = body || {}
+      if (!username || !password) {
+        return res.status(400).json({ success: false, message: '用户名和密码不能为空' })
       }
-      const result = await login(phone)
+      const result = await login(username, password)
       return res.status(result.success ? 200 : 400).json(result)
     }
     
+    // 获取用户信息
     if (apiPath === '/user/profile' && req.method === 'GET') {
       const userId = req.query.userId || req.headers['x-user-id']
       if (!userId) {

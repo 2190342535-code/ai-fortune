@@ -30,11 +30,11 @@ async function request(url, options = {}) {
 
 // 用户相关
 export const userAPI = {
-  register(phone) {
-    return request('/user/register', { method: 'POST', body: JSON.stringify({ phone }) })
+  register(username, password) {
+    return request('/user/register', { method: 'POST', body: JSON.stringify({ username, password }) })
   },
-  login(phone) {
-    return request('/user/login', { method: 'POST', body: JSON.stringify({ phone }) })
+  login(username, password) {
+    return request('/user/login', { method: 'POST', body: JSON.stringify({ username, password }) })
   },
   getProfile() {
     return request('/user/profile')
@@ -43,87 +43,95 @@ export const userAPI = {
 
 // 角色相关
 export const roleAPI = {
-  getAll() {
-    return request('/roles')
-  },
   create(roleData) {
-    return request('/roles', { method: 'POST', body: JSON.stringify(roleData) })
+    return request('/role/create', { method: 'POST', body: JSON.stringify(roleData) })
   },
-  update(id, roleData) {
-    return request(`/roles/${id}`, { method: 'PUT', body: JSON.stringify(roleData) })
+  getAll() {
+    return request('/role/list')
   },
-  delete(id) {
-    return request(`/roles/${id}`, { method: 'DELETE' })
+  getOne(roleId) {
+    return request(`/role/${roleId}`)
   },
-  setActive(id) {
-    return request(`/roles/${id}/active`, { method: 'POST' })
+  update(roleId, roleData) {
+    return request(`/role/${roleId}`, { method: 'PUT', body: JSON.stringify(roleData) })
+  },
+  delete(roleId) {
+    return request(`/role/${roleId}`, { method: 'DELETE' })
   }
 }
 
 // MBTI相关
 export const mbtiAPI = {
   getResult(roleId) {
-    return request(`/mbti/${roleId}`)
+    return request(`/mbti/result/${roleId}`)
   },
   submitTest(roleId, answers) {
-    return request('/mbti/test', { method: 'POST', body: JSON.stringify({ roleId, answers }) })
-  },
-  selectType(roleId, mbtiType) {
-    return request('/mbti/select', { method: 'POST', body: JSON.stringify({ roleId, mbtiType }) })
+    return request('/mbti/submit', { method: 'POST', body: JSON.stringify({ roleId, answers }) })
   }
 }
 
-// 运势相关
+// 星座分析
 export const astroAPI = {
-  getAnalysis(roleId) {
-    return request(`/astro/${roleId}`)
+  analyze(birthday) {
+    return request('/astro/analyze', { method: 'POST', body: JSON.stringify({ birthday }) })
   }
 }
 
+// 每日运势
 export const dailyAPI = {
-  getDaily(roleId) {
+  get(roleId) {
     return request(`/daily/${roleId}`)
   }
 }
 
+// 抽签
 export const fortuneAPI = {
-  draw(roleId, type) {
-    return request('/fortune/draw', { method: 'POST', body: JSON.stringify({ roleId, type }) })
+  draw(roleId) {
+    return request('/fortune/draw', { method: 'POST', body: JSON.stringify({ roleId }) })
   }
 }
 
+// 解梦
 export const dreamAPI = {
-  interpret(roleId, content) {
-    return request('/dream/interpret', { method: 'POST', body: JSON.stringify({ roleId, content }) })
+  interpret(dream) {
+    return request('/dream/interpret', { method: 'POST', body: JSON.stringify({ dream }) })
   }
 }
 
+// 解卦
 export const hexagramAPI = {
-  cast(roleId, hexagram, question) {
-    return request('/hexagram/cast', { method: 'POST', body: JSON.stringify({ roleId, hexagram, question }) })
+  consult(question) {
+    return request('/hexagram/consult', { method: 'POST', body: JSON.stringify({ question }) })
   }
 }
 
+// AI聊天
 export const chatAPI = {
-  sendMessage(roleId, message, history) {
-    return request('/chat/message', { method: 'POST', body: JSON.stringify({ roleId, message, history }) })
+  send(roleId, message, history) {
+    return request('/chat/send', { method: 'POST', body: JSON.stringify({ roleId, message, history }) })
+  },
+  getHistory(roleId) {
+    return request(`/chat/history/${roleId}`)
   }
 }
 
+// 生日密码
 export const lifeAPI = {
-  getLifeNumber(roleId) {
-    return request(`/life/${roleId}`)
+  calculate(birthday) {
+    return request('/life/calculate', { method: 'POST', body: JSON.stringify({ birthday }) })
   }
 }
 
+// 姓名分析
 export const nameAPI = {
-  analyze(roleId, name) {
-    return request('/name/analyze', { method: 'POST', body: JSON.stringify({ roleId, name }) })
+  analyze(name, gender) {
+    return request('/name/analyze', { method: 'POST', body: JSON.stringify({ name, gender }) })
   }
 }
 
+// 配对
 export const compatAPI = {
-  analyze(roleAId, roleBId, type) {
-    return request('/compat/analyze', { method: 'POST', body: JSON.stringify({ roleAId, roleBId, type }) })
+  match(roleId1, roleId2) {
+    return request('/compat/match', { method: 'POST', body: JSON.stringify({ roleId1, roleId2 }) })
   }
 }

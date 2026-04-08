@@ -113,10 +113,8 @@ const roleStore = useRoleStore()
 
 onMounted(async () => {
   // 检查登录状态
-  const userId = localStorage.getItem('userId')
-  if (userId) {
-    userStore.userId = userId
-    userStore.isLoggedIn = true
+  userStore.restoreLogin()
+  if (userStore.isLoggedIn) {
     await roleStore.fetchRoles()
   }
 })

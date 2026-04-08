@@ -7,30 +7,54 @@
 
     <div class="card login-card">
       <div class="form-group">
-        <label>手机号</label>
+        <label>用户名</label>
         <input 
-          type="tel" 
-          v-model="phone" 
-          placeholder="请输入手机号"
-          maxlength="11"
+          type="text" 
+          v-model="username" 
+          placeholder="请输入用户名"
         />
+      </div>
+      
+      <div class="form-group">
+        <label>密码</label>
+        <input 
+          type="password" 
+          v-model="password" 
+          placeholder="请输入密码"
+        />
+      </div>
+
+      <div class="options">
+        <label class="checkbox">
+          <input type="checkbox" v-model="rememberUsername" />
+          <span>记住用户名</span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" v-model="rememberPassword" />
+          <span>记住密码</span>
+        </label>
       </div>
       
       <button 
         class="btn btn-primary btn-block" 
         @click="handleLogin"
-        :disabled="!phone || loading"
+        :disabled="!username || !password || loading"
       >
-        {{ loading ? '登录中...' : '登录/注册' }}
+        {{ loading ? '登录中...' : (isRegister ? '注册' : '登录') }}
       </button>
+
+      <div class="switch-mode">
+        <span>{{ isRegister ? '已有账号？' : '没有账号？' }}</span>
+        <a @click="isRegister = !isRegister">{{ isRegister ? '登录' : '注册' }}</a>
+      </div>
       
-      <p class="hint">使用手机号登录，新用户会自动注册</p>
+      <p class="hint">{{ isRegister ? '创建账号后即可使用' : '登录后开始探索你的命运' }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user.js'
 import { useRoleStore } from '../stores/role.js'
@@ -39,23 +63,61 @@ const router = useRouter()
 const userStore = useUserStore()
 const roleStore = useRoleStore()
 
-const phone = ref('')
+const username = ref('')
+const password = ref('')
+const rememberUsername = ref(true)
+const rememberPassword = ref(false)
 const loading = ref(false)
+const isRegister = ref(false)
+
+onMounted(() => {
+  // 读取保存的用户名
+  const savedUsername = localStorage.getItem('savedUsername')
+  if (savedUsername) {
+    username.value = savedUsername
+  }
+  
+  // 读取记住的密码
+  const savedPassword = localStorage.getItem('savedPassword')
+  if (savedPassword) {
+    password.value = savedPassword
+    rememberPassword.value = true
+  }
+})
 
 const handleLogin = async () => {
-  if (!phone.value || phone.value.length !== 11) {
-    alert('请输入正确的11位手机号')
+  if (!username.value || !password.value) {
+    alert('请输入用户名和密码')
     return
   }
   
   loading.value = true
   try {
-    await userStore.login(phone.value)
-    // 获取角色列表
-    await roleStore.fetchRoles()
+    // 记住用户名（默认）
+    if (rememberUsername.value) {
+      localStorage.setItem('savedUsername', username.value)
+    } else {
+      localStorage.removeItem('savedUsername')
+    }
     
-    // 跳转到首页
-    router.replace('/')
+    // 记住密码（可选）
+    if (rememberPassword.value) {
+      localStorage.setItem('savedPassword', password.value)
+    } else {
+      localStorage.removeItem('savedPassword')
+    }
+    
+    // 调用登录/注册API
+    const result = await userStore.login(username.value, password.value, isRegister.value)
+    
+    if (result.success) {
+      // 获取角色列表
+      await roleStore.fetchRoles()
+      // 跳转到首页
+      router.replace('/')
+    } else {
+      alert(result.message || '登录失败，请重试')
+    }
   } catch (error) {
     alert('登录失败，请重试')
     console.error(error)
@@ -89,7 +151,7 @@ const handleLogin = async () => {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
@@ -106,10 +168,46 @@ const handleLogin = async () => {
   font-size: 16px;
 }
 
+.options {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
 .btn-block {
   width: 100%;
   padding: 14px;
   font-size: 16px;
+}
+
+.switch-mode {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.switch-mode span {
+  color: #999;
+}
+
+.switch-mode a {
+  color: #667eea;
+  margin-left: 8px;
+  cursor: pointer;
 }
 
 .hint {
