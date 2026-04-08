@@ -7,6 +7,11 @@ const routes = [
     component: () => import('../views/Home.vue')
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/Login.vue')
+  },
+  {
     path: '/create-role',
     name: 'CreateRole',
     component: () => import('../views/CreateRole.vue')
@@ -76,6 +81,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// 路由守卫：需要登录的页面
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('userId')
+  
+  // 不需要登录的页面
+  const whiteList = ['/login', '/']
+  
+  if (!isLoggedIn && !whiteList.includes(to.path)) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router
