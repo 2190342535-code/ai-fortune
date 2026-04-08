@@ -22,8 +22,8 @@
           :class="['option-btn', answers[currentIndex] === idx + 1 && 'selected']"
           @click="selectOption(idx + 1)"
         >
-          <span class="option-label">{{ ['A', 'B'][idx] }}</span>
-          <span class="option-text">{{ option }}</span>
+          <span class="option-label">{{ idx + 1 }}</span>
+          <span class="option-text">{{ idx === 0 ? '完全不同意' : (idx === 6 ? '完全同意' : (idx < 3 ? '不太同意' : '同意')) }}</span>
         </button>
       </div>
 
