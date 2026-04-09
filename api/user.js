@@ -1,6 +1,9 @@
 // 用户API - Vercel Serverless Function格式
 import { connectDB, usersCollection, toObjectId } from '../utils/db.js'
 
+// 调试日志
+console.log('=== user.js 被调用 ===')
+
 // 注册
 async function register(username, password) {
   try {
@@ -80,6 +83,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 调试日志
+    console.log('=== user.js 被调用 ===')
+    console.log('req.url:', req.url)
+    console.log('req.method:', req.method)
+    console.log('req.body:', req.body)
+    
     // 确保数据库连接
     await connectDB()
     
